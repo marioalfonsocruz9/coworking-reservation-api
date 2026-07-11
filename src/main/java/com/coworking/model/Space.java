@@ -12,7 +12,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,7 +25,6 @@ import lombok.Setter;
 )
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Space extends BaseEntity {
@@ -47,7 +45,6 @@ public class Space extends BaseEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal hourlyRate;
 
-    @Builder.Default
     @Column(nullable = false)
     private Boolean enabled = true;
     

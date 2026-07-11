@@ -20,3 +20,9 @@ spring:
 logging:
   level:
     com.coworking: DEBUG
+
+application:
+  security:
+    jwt:
+      secret-key: 4f92f2c53dbe71d3d0d4c6c2f88fbe44b6a76d6c9fd9bfa8d7c2b4f17f77e3a7
+      expiration: 86400000 # 24h
