@@ -9,7 +9,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,8 +18,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class User extends BaseEntity {
+	
+	public User(
+	        String firstName,
+	        String lastName,
+	        String email,
+	        String passwordHash,
+	        Role role) {
+
+	    this.firstName = firstName;
+	    this.lastName = lastName;
+	    this.email = email;
+	    this.passwordHash = passwordHash;
+	    this.role = role;
+	    this.enabled = true;
+	}
 
 	@Column(nullable = false, length = 100)
 	private String firstName;

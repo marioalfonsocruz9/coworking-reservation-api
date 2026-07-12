@@ -2,13 +2,15 @@ package com.coworking.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.coworking.security.jwt.JwtAuthenticationFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.coworking.util.ApiPaths;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +39,18 @@ public class SecurityConfig {
                             "/swagger-ui.html",
                             "/v3/api-docs/**")
                     .permitAll()
+                    
+                    .requestMatchers(HttpMethod.GET, ApiPaths.SPACES, ApiPaths.SPACES + "/**")
+                    .hasAnyRole("USER", "ADMIN")
+
+                    .requestMatchers(HttpMethod.POST, ApiPaths.SPACES)
+                    .hasRole("ADMIN")
+
+                    .requestMatchers(HttpMethod.PUT, ApiPaths.SPACES + "/**")
+                    .hasRole("ADMIN")
+
+                    .requestMatchers(HttpMethod.DELETE, ApiPaths.SPACES + "/**")
+                    .hasRole("ADMIN")
 
                     .anyRequest()
                     .authenticated())
