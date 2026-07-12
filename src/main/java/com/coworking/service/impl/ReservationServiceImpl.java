@@ -24,6 +24,7 @@ import com.coworking.model.Space;
 import com.coworking.model.User;
 import com.coworking.repository.ReservationRepository;
 import com.coworking.repository.SpaceRepository;
+import com.coworking.service.PaymentValidationService;
 import com.coworking.service.ReservationService;
 import com.coworking.service.UserService;
 
@@ -43,6 +44,8 @@ public class ReservationServiceImpl implements ReservationService {
 	private final ReservationMapper reservationMapper;
 	
 	private final ApplicationEventPublisher eventPublisher;
+	
+	private final PaymentValidationService paymentValidationService;
 	
 	@Override
 	public ReservationResponse create(ReservationRequest request) {
@@ -70,6 +73,19 @@ public class ReservationServiceImpl implements ReservationService {
 
 	    Reservation saved =
 	            reservationRepository.save(reservation);
+	    
+	    
+	    boolean paymentOk =
+	            paymentValidationService.validatePayment(
+	                    saved.getId(),
+	                    saved.getTotalAmount());
+
+	    saved.setStatus(
+	            paymentOk
+	                    ? ReservationStatus.CONFIRMED
+	                    : ReservationStatus.PENDING);
+	    
+	    saved = reservationRepository.save(saved);
 	    
 	    eventPublisher.publishEvent(
 	            new ReservationCreatedEvent(saved));

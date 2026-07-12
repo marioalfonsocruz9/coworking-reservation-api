@@ -65,6 +65,8 @@ public class SecurityConfig {
 
                     .requestMatchers(HttpMethod.PATCH, ApiPaths.RESERVATIONS + "/**")
                     .hasAnyRole("USER", "ADMIN")
+                    
+                    .requestMatchers("/api/v1/mock/**").permitAll()
 
                     .anyRequest()
                     .authenticated())

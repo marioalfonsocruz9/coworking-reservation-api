@@ -26,3 +26,26 @@ application:
     jwt:
       secret-key: 4f92f2c53dbe71d3d0d4c6c2f88fbe44b6a76d6c9fd9bfa8d7c2b4f17f77e3a7
       expiration: 86400000 # 24h
+
+payment:
+  base-url: http://localhost:8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers
+
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        sliding-window-size: 5
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
