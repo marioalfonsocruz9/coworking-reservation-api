@@ -40,6 +40,7 @@ public class SecurityConfig {
                             "/v3/api-docs/**")
                     .permitAll()
                     
+                    //Spaces
                     .requestMatchers(HttpMethod.GET, ApiPaths.SPACES, ApiPaths.SPACES + "/**")
                     .hasAnyRole("USER", "ADMIN")
 
@@ -51,6 +52,19 @@ public class SecurityConfig {
 
                     .requestMatchers(HttpMethod.DELETE, ApiPaths.SPACES + "/**")
                     .hasRole("ADMIN")
+                    
+                    //Reservation
+                    .requestMatchers(HttpMethod.POST, ApiPaths.RESERVATIONS)
+                    .hasAnyRole("USER", "ADMIN")
+
+                    .requestMatchers(HttpMethod.GET, ApiPaths.RESERVATIONS + "/me")
+                    .hasRole("USER")
+
+                    .requestMatchers(HttpMethod.GET, ApiPaths.RESERVATIONS)
+                    .hasRole("ADMIN")
+
+                    .requestMatchers(HttpMethod.PATCH, ApiPaths.RESERVATIONS + "/**")
+                    .hasAnyRole("USER", "ADMIN")
 
                     .anyRequest()
                     .authenticated())
