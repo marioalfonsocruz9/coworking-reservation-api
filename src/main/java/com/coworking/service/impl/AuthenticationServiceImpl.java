@@ -1,5 +1,8 @@
 package com.coworking.service.impl;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +15,7 @@ import com.coworking.exception.EmailAlreadyExistsException;
 import com.coworking.mapper.UserMapper;
 import com.coworking.model.User;
 import com.coworking.security.jwt.JwtService;
+import com.coworking.security.user.CoworkingUserDetails;
 import com.coworking.service.AuthenticationService;
 import com.coworking.service.UserService;
 
@@ -25,6 +29,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserMapper userMapper;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     @Transactional
@@ -51,9 +56,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     }
 
-	@Override
-	public AuthenticationResponse authenticate(LoginRequest request) {
-		throw new UnsupportedOperationException("Not implemented yet");
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public AuthenticationResponse authenticate(LoginRequest request) {
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.email(),
+                        request.password()));
+
+        CoworkingUserDetails principal =
+                (CoworkingUserDetails) authentication.getPrincipal();
+
+        String token = jwtService.generateToken(principal.getUser());
+
+        return new AuthenticationResponse(
+                token,
+                userMapper.toResponse(principal.getUser()));
+
+    }
 
 }
