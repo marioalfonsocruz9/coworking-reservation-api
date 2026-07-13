@@ -399,7 +399,7 @@ Run the downloaded `.jar` file:
 java -jar lombok.jar
 ```
 
-## Screenshots Database Console
+## Screenshots
 
 ![Swagger](docs/screenshots/swagger.png)
 
