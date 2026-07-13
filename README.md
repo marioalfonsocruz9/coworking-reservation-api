@@ -372,3 +372,45 @@ Antes de ejecutar las peticiones configure las siguientes variables:
 El proyecto incorpora la infraestructura necesaria para pruebas mediante `spring-boot-starter-test` y `spring-security-test`.
 
 Debido al tiempo disponible para la prueba técnica se priorizó la implementación de los requisitos funcionales y no funcionales solicitados. Como trabajo futuro se incorporarían pruebas unitarias con Mockito y pruebas de integración utilizando PostgreSQL mediante Testcontainers para garantizar un entorno completamente aislado y reproducible.
+
+
+
+
+
+## Lombok Setup in Eclipse
+
+This project uses Lombok.
+
+### 1. Download Lombok
+
+Download Lombok from:
+
+[Project Lombok](https://projectlombok.org/download)
+
+Or take it from .m2 folder
+
+---
+
+### 2. Install Lombok in Eclipse
+
+Run the downloaded `.jar` file:
+
+```bash
+java -jar lombok.jar
+```
+
+## Screenshots Database Console
+
+![Swagger](docs/screenshots/swagger.png)
+
+![DB](docs/screenshots/db.png)
+
+![Eclipse](docs/screenshots/eclipse.png)
+
+![Folder](docs/screenshots/folder.png)
+
+# Author
+
+Mario Alfonso Cruz Vásquez
+
+Senior Java Backend Developer
