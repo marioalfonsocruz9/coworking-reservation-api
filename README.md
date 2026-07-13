@@ -176,13 +176,31 @@ La base de datos se ejecuta mediante Docker Compose.
 
 # Ejecución del proyecto
 
-## 1. Levantar PostgreSQL
+# Prerrequisitos
+
+- Java 17 o superior
+- Maven 3.9+
+- Docker Desktop (o Docker Engine + Docker Compose)
+- Git
+
+## 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/marioalfonsocruz9/coworking-reservation-api.git
+cd coworking-reservation-api
+```
+
+---
+
+## 2. Levantar PostgreSQL
+
+El proyecto utiliza PostgreSQL ejecutándose mediante Docker Compose.
 
 ```bash
 docker compose up -d
 ```
 
-Verificar que el contenedor se encuentre en ejecución:
+Verificar que el contenedor esté en ejecución:
 
 ```bash
 docker ps
@@ -190,7 +208,7 @@ docker ps
 
 ---
 
-## 2. Compilar el proyecto
+## 3. Compilar el proyecto
 
 ```bash
 mvn clean install
@@ -198,7 +216,7 @@ mvn clean install
 
 ---
 
-## 3. Ejecutar la aplicación
+## 4. Ejecutar la aplicación
 
 Desde Maven:
 
@@ -206,7 +224,11 @@ Desde Maven:
 mvn spring-boot:run
 ```
 
-o directamente desde el IDE (Eclipse/IntelliJ).
+o importando el proyecto como **Maven Project** en Eclipse o IntelliJ IDEA y ejecutando la clase:
+
+```
+CoworkingReservationApiApplication
+```
 
 El proyecto utiliza por defecto el perfil:
 
@@ -216,16 +238,30 @@ dev
 
 ---
 
-# Swagger
-
-Una vez iniciada la aplicación:
+## 5. Acceder a Swagger
 
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
 
+---
 
-Importar la colección de Postman incluida en el proyecto y comenzar las pruebas.
+## 6. Importar la colección de Postman
+
+Importe el archivo:
+
+```
+coworking-reservation-api.postman_collection.json
+```
+
+Configure las variables de la colección:
+
+| Variable | Valor |
+|----------|-------|
+| `base_url` | `http://localhost:8080` |
+| `api_prefix` | `/api/v1` |
+
+Una vez realizado el login, el JWT deberá asignarse a la variable `auth_token` para autenticar el resto de las peticiones.
 
 ---
 
