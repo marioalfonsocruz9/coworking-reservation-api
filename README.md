@@ -2,22 +2,57 @@
 
 Microservicio REST para la gestión de reservas de espacios de coworking desarrollado como prueba técnica utilizando Java 17 y Spring Boot 3.
 
-## Tecnologías
 
-- Java 17
-- Spring Boot 3
-- Spring Security
-- JWT Authentication
-- Spring Data JPA
-- PostgreSQL
-- Docker
-- Maven
-- MapStruct
-- Bean Validation (Jakarta Validation)
-- Spring Cache
-- Spring Actuator
-- Resilience4j (Circuit Breaker)
-- OpenAPI / Swagger
+# Decisiones técnicas
+
+## Java 17 + Spring Boot 3
+
+Se utilizó Java 17 por ser una versión LTS ampliamente utilizada en entornos empresariales y compatible con Spring Boot 3. Spring Boot 3 simplifica la configuración del proyecto e integra de forma nativa componentes como Spring Security, JPA, Actuator y Bean Validation.
+
+## Spring Data JPA
+
+Se utilizó Spring Data JPA para simplificar el acceso a datos mediante repositorios. Se implementaron relaciones entre entidades y consultas personalizadas con `@Query` para resolver casos específicos como la validación de reservas solapadas y el reporte de ocupación.
+
+## Spring Security + JWT
+
+La autenticación se implementó mediante JWT para mantener la API stateless. La autorización basada en roles (`ROLE_ADMIN` y `ROLE_USER`) permite restringir el acceso a los distintos endpoints según el perfil del usuario.
+
+## Bean Validation + ControllerAdvice
+
+Se utilizó Jakarta Bean Validation para validar las solicitudes antes de llegar a la lógica de negocio. El manejo centralizado de excepciones mediante `@RestControllerAdvice` proporciona respuestas consistentes y mensajes de error descriptivos.
+
+## Spring Boot Actuator
+
+Se habilitó Actuator para exponer endpoints de monitoreo (`health`, `info`, `metrics` y `circuitbreakers`), facilitando la observabilidad de la aplicación.
+
+## Profiles y ConfigurationProperties
+
+La configuración se separó por perfiles (`application-dev.yml` y `application-prod.yml`) y se centralizó mediante `@ConfigurationProperties`, evitando el uso disperso de `@Value`.
+
+## Spring Cache
+
+Se utilizó `@Cacheable` para optimizar el cálculo del reporte de ocupación y `@CacheEvict` para invalidar la información cuando una reserva modifica la ocupación.
+
+## Eventos de dominio y procesamiento asíncrono
+
+Se utilizó `ApplicationEventPublisher` junto con `@EventListener` y `@Async` para desacoplar la confirmación de una reserva del envío de la notificación, evitando bloquear la respuesta HTTP.
+
+## Manejo transaccional
+
+Las operaciones críticas de reserva utilizan `@Transactional` para garantizar la consistencia de los datos, especialmente durante la validación de reservas solapadas.
+
+## OpenAPI / Swagger
+
+Se integró Swagger para generar automáticamente la documentación de la API y facilitar las pruebas de los endpoints.
+
+## Docker
+
+Se utilizó Docker Compose para levantar PostgreSQL de forma sencilla y reproducible durante el desarrollo. Además, el proyecto incluye un Dockerfile para la construcción de la aplicación.
+El proyecto incluye un Dockerfile para la aplicación y un docker-compose.yml para levantar PostgreSQL durante el desarrollo.
+
+## Resilience4j
+
+La llamada al servicio externo de validación de pagos se protegió mediante un Circuit Breaker configurado con Resilience4j. Cuando el servicio presenta fallos repetidos, el circuito se abre y un método fallback mantiene la reserva en estado `PENDING`, evitando afectar la disponibilidad del sistema.
 
 ---
 
@@ -28,7 +63,7 @@ El proyecto está organizado por capas:
 - Controller
 - Service
 - Repository
-- Entity
+- Model
 - DTO
 - Mapper
 - Configuration
@@ -77,14 +112,11 @@ Se utiliza una arquitectura desacoplada basada en DTOs para evitar exponer direc
 
 ## Observer
 
-Se implementó utilizando:
+Se implementó el patrón Observer utilizando `ApplicationEventPublisher` y `@EventListener`.
 
-- ApplicationEventPublisher
-- @EventListener
+Cuando una reserva es confirmada se publica un evento de dominio (`ReservationCreatedEvent`) que es consumido por un listener encargado de enviar la notificación de forma asíncrona.
 
-Cuando una reserva es confirmada se publica un evento de dominio que dispara de forma desacoplada el envío de una notificación.
-
-Esta solución evita acoplar la lógica de reservas con la lógica de notificaciones.
+Este enfoque evita acoplar el servicio de reservas con la lógica de notificación y permite incorporar nuevos comportamientos reaccionando al mismo evento sin modificar la lógica existente, evitando soluciones basadas en múltiples sentencias `if` o `switch`.
 
 ---
 
@@ -294,7 +326,13 @@ Antes de ejecutar las peticiones configure las siguientes variables:
 # Mejoras futuras
 
 - Incorporar pruebas de integración con Testcontainers.
-- Implementar versionado de la API.
 - Integrar un proveedor de correo electrónico real.
 - Sustituir el servicio de pago simulado por una integración real.
 - Desplegar la aplicación completamente mediante Docker Compose incluyendo la API.
+
+
+# Testing
+
+El proyecto incorpora la infraestructura necesaria para pruebas mediante `spring-boot-starter-test` y `spring-security-test`.
+
+Debido al tiempo disponible para la prueba técnica se priorizó la implementación de los requisitos funcionales y no funcionales solicitados. Como trabajo futuro se incorporarían pruebas unitarias con Mockito y pruebas de integración utilizando PostgreSQL mediante Testcontainers para garantizar un entorno completamente aislado y reproducible.
