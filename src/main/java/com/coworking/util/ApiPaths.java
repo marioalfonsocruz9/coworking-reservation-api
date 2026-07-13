@@ -9,6 +9,8 @@ public class ApiPaths {
 	public static final String SPACES = API_V1 + "/spaces";
 
 	public static final String RESERVATIONS = API_V1 + "/reservations";
+	
+	public static final String REPORTS = API_V1 + "/reports";
 
 	private ApiPaths() {
 		throw new IllegalStateException("Creation not allowed");

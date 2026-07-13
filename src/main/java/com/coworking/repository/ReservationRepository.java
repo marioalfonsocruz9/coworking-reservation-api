@@ -31,5 +31,23 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByOrderByStartTimeDesc();
 
     List<Reservation> findByUserIdOrderByStartTimeDesc(Long userId);
+    
+    @Query(value = """
+    	    SELECT COALESCE(
+    	        SUM(
+    	            EXTRACT(EPOCH FROM (r.end_time - r.start_time))
+    	        ),
+    	        0
+    	    )
+    	    FROM reservations r
+    	    WHERE r.space_id = :spaceId
+    	      AND r.status = 'CONFIRMED'
+    	      AND r.start_time >= :start
+    	      AND r.end_time <= :end
+    	    """, nativeQuery = true)
+    	Double getReservedSeconds(
+    	        @Param("spaceId") Long spaceId,
+    	        @Param("start") LocalDateTime start,
+    	        @Param("end") LocalDateTime end);
 
 }

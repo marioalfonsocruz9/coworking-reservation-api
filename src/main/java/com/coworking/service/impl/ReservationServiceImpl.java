@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,7 @@ public class ReservationServiceImpl implements ReservationService {
 	private final PaymentValidationService paymentValidationService;
 	
 	@Override
+	@CacheEvict(value = "occupancy-report", allEntries = true)
 	public ReservationResponse create(ReservationRequest request) {
 
 	    User user = userService.getCurrentUser();
@@ -121,6 +123,7 @@ public class ReservationServiceImpl implements ReservationService {
 	}
 
 	@Override
+	@CacheEvict(value = "occupancy-report", allEntries = true)
 	public void cancel(Long reservationId) {
 
 	    User currentUser = userService.getCurrentUser();
